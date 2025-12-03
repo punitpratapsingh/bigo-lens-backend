@@ -52,6 +52,10 @@ COLLECTION = "test"
 
 app = FastAPI(title="SigLIP ONNX Image Embedding Service")
 
+@app.get("/")
+def root():
+    return {"status": "running", "message": "BigOLens API online"}
+
 
 # ----------------------------
 # 1️⃣ IMAGE SEARCH
@@ -71,16 +75,13 @@ async def embed_image(file: UploadFile = File(...)):
     # Get CLS token embedding
     embedding = outputs[0][0][0]   # shape → (768,)
     print("Embedding shape BEFORE norm:", embedding.shape)
-    print("Sample raw:", embedding[:10])
 
     # Normalize
     embedding = embedding / np.linalg.norm(embedding)
     print("Embedding shape AFTER norm:", embedding.shape)
-    print("Sample normalized:", embedding)
 
     # Qdrant requires 1D list
     query_vector = embedding.tolist()
-    print("Query vector length:", len(query_vector))
 
     # Qdrant search
     search_result = qdrant_client_app.search(
@@ -88,12 +89,12 @@ async def embed_image(file: UploadFile = File(...)):
         query_vector=query_vector,
         limit=10
     )
-    print("Search result:", search_result)
 
     formatted_results = [
         {"id": r.id, "score": r.score, "payload": r.payload}
         for r in search_result
     ]
+    print("Search result:", formatted_results)
 
     return JSONResponse({
         "status": "success",
