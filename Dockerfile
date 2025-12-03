@@ -7,7 +7,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-# Download the model during build
+# Download the model during builds
 RUN python download_model.py
 
 EXPOSE 8000
