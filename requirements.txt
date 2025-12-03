@@ -1,0 +1,8 @@
+fastapi
+uvicorn
+numpy<2
+pillow
+onnxruntime
+qdrant-client
+python-multipart
+requests
